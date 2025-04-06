@@ -1,7 +1,10 @@
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Contacto {
-    // Propiedades
     private int id;
     private String nombre;
     private String apellido;
@@ -9,10 +12,12 @@ public class Contacto {
     private String telefono;
     private String email;
     private String direccion;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
-    // Constructor
-    public Contacto(int id, String nombre, String apellido, String apodo, String telefono, String email, String direccion, Date fechaNacimiento) {
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public Contacto(int id, String nombre, String apellido, String apodo, String telefono,
+                    String email, String direccion, LocalDate fechaNacimiento) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -80,15 +85,14 @@ public class Contacto {
         this.direccion = direccion;
     }
 
-    public Date getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    //metodo tostring
     @Override
     public String toString() {
         return "Contacto{" +
@@ -99,7 +103,74 @@ public class Contacto {
                 ", telefono='" + telefono + '\'' +
                 ", email='" + email + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", fechaNacimiento=" + fechaNacimiento +
+                ", fechaNacimiento=" + fechaNacimiento.format(FORMATO_FECHA) +
                 '}';
+    }
+
+    // Exportación a CSV
+    public String toCSV() {
+        return id + "," + nombre + "," + apellido + "," + apodo + "," +
+                telefono + "," + email + "," + direccion + "," +
+                fechaNacimiento.format(FORMATO_FECHA);
+    }
+
+    // Importación desde CSV
+    public static Contacto fromCSV(String linea) {
+        try {
+            String[] partes = linea.split(",");
+            if (partes.length < 8) {
+                throw new IllegalArgumentException("Línea CSV incompleta: " + linea);
+            }
+
+            int id = Integer.parseInt(partes[0].trim());
+            String nombre = partes[1].trim();
+            String apellido = partes[2].trim();
+            String apodo = partes[3].trim();
+            String telefono = partes[4].trim();
+            String email = partes[5].trim();
+            String direccion = partes[6].trim();
+            LocalDate fechaNacimiento = LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
+
+            return new Contacto(id, nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
+
+        } catch (DateTimeParseException e) {
+            System.out.println("Error de formato de fecha al importar: " + e.getMessage());
+            return null;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Argumento ilegal al importar: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Comparator de ejemplo (ordenar por apellido)
+    public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido);
+
+    // Equals y hashCode (basado en ID)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Contacto)) return false;
+        Contacto contacto = (Contacto) o;
+        return id == contacto.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    // (Opcional) Obtener campo por nombre para búsquedas dinámicas
+    public Object getCampo(String campo) {
+        return switch (campo.toLowerCase()) {
+            case "id" -> id;
+            case "nombre" -> nombre;
+            case "apellido" -> apellido;
+            case "apodo" -> apodo;
+            case "telefono" -> telefono;
+            case "email" -> email;
+            case "direccion" -> direccion;
+            case "fechanacimiento" -> fechaNacimiento;
+            default -> null;
+        };
     }
 }

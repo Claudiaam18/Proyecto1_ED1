@@ -1,13 +1,13 @@
 import java.util.Scanner;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         GestorContactos gestor = new GestorContactos();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (true) {
             System.out.println("Menú de Gestión de Contactos:");
@@ -40,10 +40,10 @@ public class Main {
                     System.out.print("Fecha de nacimiento (yyyy-MM-dd): ");
                     String fechaStr = scanner.nextLine();
                     try {
-                        Date fechaNacimiento = sdf.parse(fechaStr);
+                        LocalDate fechaNacimiento = LocalDate.parse(fechaStr, dtf);
                         gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
                         System.out.println("Contacto agregado exitosamente.");
-                    } catch (ParseException e) {
+                    } catch (DateTimeParseException e) {
                         System.out.println("Error en el formato de la fecha: " + e.getMessage());
                     }
                     break;
@@ -74,10 +74,10 @@ public class Main {
                     System.out.print("Nueva fecha de nacimiento (yyyy-MM-dd): ");
                     String nuevaFechaStr = scanner.nextLine();
                     try {
-                        Date nuevaFechaNacimiento = sdf.parse(nuevaFechaStr);
+                        LocalDate nuevaFechaNacimiento = LocalDate.parse(nuevaFechaStr, dtf);
                         gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido, nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
                         System.out.println("Contacto actualizado exitosamente.");
-                    } catch (ParseException e) {
+                    } catch (DateTimeParseException e) {
                         System.out.println("Error en el formato de la fecha: " + e.getMessage());
                     }
                     break;

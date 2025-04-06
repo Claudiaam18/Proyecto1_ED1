@@ -2,33 +2,50 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Comparator;
 
-class Nodo {
-    int id;
-    Nodo izquierdo;
-    Nodo derecho;
+// Clase Nodo genérica
+class Nodo<T extends Comparable<T>> {
+    T clave; // Cambia el tipo a T genérico
+    Nodo<T> izquierdo;
+    Nodo<T> derecho;
     int altura;
 
-    public Nodo(int id) {
-        this.id = id;
+    public Nodo(T clave) {
+        this.clave = clave;
         this.altura = 1;
     }
 }
 
-public class ArbolAVL {
-    private Nodo raiz;
+// Clase ArbolAVL genérica
+public class ArbolAVL<T extends Comparable<T>> {
+    private Nodo<T> raiz;
+    private Comparator<T> comparador; // Comparador para personalizar el orden
 
-    private int altura(Nodo nodo) {
+    // Constructor que recibe un comparador
+    public ArbolAVL(Comparator<T> comparador) {
+        this.comparador = comparador;
+    }
+
+    // Constructor por defecto
+    public ArbolAVL() {
+
+    }
+
+    // Método para calcular la altura de un nodo
+    private int altura(Nodo<T> nodo) {
         return (nodo == null) ? 0 : nodo.altura;
     }
 
-    private int factorBalance(Nodo nodo) {
+    // Método para calcular el factor de balance de un nodo
+    private int factorBalance(Nodo<T> nodo) {
         return (nodo == null) ? 0 : altura(nodo.izquierdo) - altura(nodo.derecho);
     }
 
-    private Nodo rotarDerecha(Nodo y) {
-        Nodo x = y.izquierdo;
-        Nodo T2 = x.derecho;
+    // Rotación hacia la derecha
+    private Nodo<T> rotarDerecha(Nodo<T> y) {
+        Nodo<T> x = y.izquierdo;
+        Nodo<T> T2 = x.derecho;
 
         x.derecho = y;
         y.izquierdo = T2;
@@ -39,9 +56,10 @@ public class ArbolAVL {
         return x;
     }
 
-    private Nodo rotarIzquierda(Nodo x) {
-        Nodo y = x.derecho;
-        Nodo T2 = y.izquierdo;
+    // Rotación hacia la izquierda
+    private Nodo<T> rotarIzquierda(Nodo<T> x) {
+        Nodo<T> y = x.derecho;
+        Nodo<T> T2 = y.izquierdo;
 
         y.izquierdo = x;
         x.derecho = T2;
@@ -52,40 +70,43 @@ public class ArbolAVL {
         return y;
     }
 
-    public void insertar(int id) {
-        raiz = insertar(raiz, id);
+    // Método para insertar un nuevo nodo
+    public void insertar(T clave) {
+        raiz = insertar(raiz, clave);
     }
 
-    private Nodo insertar(Nodo nodo, int id) {
+    private Nodo<T> insertar(Nodo<T> nodo, T clave) {
         if (nodo == null) {
-            return new Nodo(id);
+            return new Nodo<>(clave);
         }
 
-        if (id < nodo.id) {
-            nodo.izquierdo = insertar(nodo.izquierdo, id);
-        } else if (id > nodo.id) {
-            nodo.derecho = insertar(nodo.derecho, id);
+        // Comparar para decidir si ir a la izquierda o derecha
+        if (comparador.compare(clave, nodo.clave) < 0) {
+            nodo.izquierdo = insertar(nodo.izquierdo, clave);
+        } else if (comparador.compare(clave, nodo.clave) > 0) {
+            nodo.derecho = insertar(nodo.derecho, clave);
         } else {
-            return nodo;
+            return nodo; // Clave duplicada no permitida
         }
 
+        // Actualizar la altura del nodo
         nodo.altura = 1 + Math.max(altura(nodo.izquierdo), altura(nodo.derecho));
+
+        // Calcular el factor de balance
         int balance = factorBalance(nodo);
 
-        if (balance > 1 && id < nodo.izquierdo.id) {
+        // Rotaciones
+        if (balance > 1 && comparador.compare(clave, nodo.izquierdo.clave) < 0) {
             return rotarDerecha(nodo);
         }
-
-        if (balance < -1 && id > nodo.derecho.id) {
+        if (balance < -1 && comparador.compare(clave, nodo.derecho.clave) > 0) {
             return rotarIzquierda(nodo);
         }
-
-        if (balance > 1 && id > nodo.izquierdo.id) {
+        if (balance > 1 && comparador.compare(clave, nodo.izquierdo.clave) > 0) {
             nodo.izquierdo = rotarIzquierda(nodo.izquierdo);
             return rotarDerecha(nodo);
         }
-
-        if (balance < -1 && id < nodo.derecho.id) {
+        if (balance < -1 && comparador.compare(clave, nodo.derecho.clave) < 0) {
             nodo.derecho = rotarDerecha(nodo.derecho);
             return rotarIzquierda(nodo);
         }
@@ -93,33 +114,37 @@ public class ArbolAVL {
         return nodo;
     }
 
-    public boolean buscar(int id) {
-        return buscar(raiz, id);
+    // Método para buscar un nodo
+    public boolean buscar(T clave) {
+        return buscar(raiz, clave);
     }
 
-    private boolean buscar(Nodo nodo, int id) {
+    private boolean buscar(Nodo<T> nodo, T clave) {
         if (nodo == null) return false;
-        if (id < nodo.id) return buscar(nodo.izquierdo, id);
-        else if (id > nodo.id) return buscar(nodo.derecho, id);
+        if (comparador.compare(clave, nodo.clave) < 0) return buscar(nodo.izquierdo, clave);
+        else if (comparador.compare(clave, nodo.clave) > 0) return buscar(nodo.derecho, clave);
         else return true;
     }
 
-    //método BFS
-    public List<Integer> recorridoPorNivel() {
-        List<Integer> resultado = new ArrayList<>();
+    // Método BFS (Recorrido por Nivel)
+    public List<T> recorridoPorNivel() {
+        List<T> resultado = new ArrayList<>();
         if (raiz == null) return resultado;
 
-        Queue<Nodo> cola = new LinkedList<>();
+        Queue<Nodo<T>> cola = new LinkedList<>();
         cola.add(raiz);
 
         while (!cola.isEmpty()) {
-            Nodo actual = cola.poll();
-            resultado.add(actual.id);
+            Nodo<T> actual = cola.poll();
+            resultado.add(actual.clave);
 
             if (actual.izquierdo != null) cola.add(actual.izquierdo);
             if (actual.derecho != null) cola.add(actual.derecho);
         }
 
         return resultado;
+    }
+
+    public void eliminar(T valor) {
     }
 }
