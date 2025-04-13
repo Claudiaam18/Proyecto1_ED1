@@ -15,9 +15,8 @@ public class Main {
             System.out.println("2. Eliminar contacto");
             System.out.println("3. Actualizar contacto");
             System.out.println("4. Visualizar contactos");
-            System.out.println("5. Importar contactos desde CSV");
-            System.out.println("6. Exportar contactos a CSV");
-            System.out.println("7. Salir");
+            System.out.println("5. Exportar contactos a CSV");
+            System.out.println("6. Salir");
             System.out.print("Seleccione una opción: ");
             int opcion = scanner.nextInt();
             scanner.nextLine(); // Limpiar el buffer
@@ -87,20 +86,13 @@ public class Main {
                     gestor.visualizarContactos();
                     break;
                 case 5:
-                    // Importar contactos
-                    System.out.print("Ruta del archivo CSV: ");
-                    String rutaImportar = scanner.nextLine();
-                    gestor.importarContactosDesdeCSV(rutaImportar);
-                    System.out.println("Contactos importados exitosamente.");
-                    break;
-                case 6:
                     // Exportar contactos
                     System.out.print("Ruta del archivo CSV a exportar: ");
                     String rutaExportar = scanner.nextLine();
                     // Implementar la lógica de exportación
                     // Por ejemplo, puedes llamar a un método en GestorContactos para exportar
                     break;
-                case 7:
+                case 6:
                     System.out.println("Saliendo...");
                     scanner.close();
                     return;
