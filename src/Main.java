@@ -131,7 +131,7 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Error: Debe ingresar un número válido.");
-                scanner.nextLine(); // Limpiar buffer
+                scanner.nextLine();
             }
         }
     }

@@ -66,7 +66,7 @@ public class GestionIndices {
             System.out.println("Recorrido por niveles del índice '" + campo + "':");
             System.out.println(String.join(", ", recorrido));
         } else {
-            System.out.println("No existe un índice para el campo '" + campo + "' o está vacío.");
+            System.out.println("No hay un índice para el campo '" + campo + "' o está vacío.");
         }
     }
 

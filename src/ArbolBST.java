@@ -86,7 +86,7 @@ public class ArbolBST<T extends Comparable<T>> {
         }
         return nodo;
     }
-
+//
     public List<T> recorridoPorNivel() {
         List<T> resultado = new ArrayList<>();
         if (raiz == null) return resultado;

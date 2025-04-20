@@ -122,7 +122,7 @@ public class Contacto {
     public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido,
             Comparator.nullsFirst(Comparator.naturalOrder()));
 
-    // Equals y hashCode (basado en ID)
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

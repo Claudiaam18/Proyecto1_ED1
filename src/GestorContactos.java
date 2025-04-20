@@ -30,7 +30,7 @@ public class GestorContactos {
     public void agregarContacto(String nombre, String apellido, String apodo, String telefono,
                                 String email, String direccion, LocalDate fechaNacimiento) {
         if (!validarEmail(email)) {
-            System.out.println("Email inválido. No se agregó el contacto.");
+            System.out.println("Error. Email inválido. No se agregó el contacto.");
             return;
         }
 
