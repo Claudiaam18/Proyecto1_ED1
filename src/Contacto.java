@@ -23,74 +23,45 @@ public class Contacto {
         this.apellido = apellido;
         this.apodo = apodo;
         this.telefono = telefono;
-        this.email = email;
+        setEmail(email); // Validación de email
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
     }
 
     // Getters y Setters
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getApodo() { return apodo; }
+    public void setApodo(String apodo) { this.apodo = apodo; }
 
-    public String getApellido() {
-        return apellido;
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getApodo() {
-        return apodo;
-    }
-
-    public void setApodo(String apodo) {
-        this.apodo = apodo;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
+    public String getEmail() { return email; }
     public void setEmail(String email) {
-        this.email = email;
+        if (validarEmail(email)) {
+            this.email = email;
+        } else {
+            throw new IllegalArgumentException("Formato de email inválido.");
+        }
     }
 
-    public String getDireccion() {
-        return direccion;
-    }
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
 
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    // Método para validar el formato de email
+    public static boolean validarEmail(String email) {
+        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     }
 
     @Override
@@ -103,21 +74,26 @@ public class Contacto {
                 ", telefono='" + telefono + '\'' +
                 ", email='" + email + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", fechaNacimiento=" + fechaNacimiento.format(FORMATO_FECHA) +
+                ", fechaNacimiento=" + (fechaNacimiento != null ? fechaNacimiento.format(FORMATO_FECHA) : "null") +
                 '}';
     }
 
     // Exportación a CSV
     public String toCSV() {
-        return id + "," + nombre + "," + apellido + "," + apodo + "," +
-                telefono + "," + email + "," + direccion + "," +
-                fechaNacimiento.format(FORMATO_FECHA);
+        return id + "," +
+                (nombre != null ? nombre : "") + "," +
+                (apellido != null ? apellido : "") + "," +
+                (apodo != null ? apodo : "") + "," +
+                (telefono != null ? telefono : "") + "," +
+                (email != null ? email : "") + "," +
+                (direccion != null ? direccion : "") + "," +
+                (fechaNacimiento != null ? fechaNacimiento.format(FORMATO_FECHA) : "");
     }
 
     // Importación desde CSV
     public static Contacto fromCSV(String linea) {
         try {
-            String[] partes = linea.split(",");
+            String[] partes = linea.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
             if (partes.length < 8) {
                 throw new IllegalArgumentException("Línea CSV incompleta: " + linea);
             }
@@ -125,11 +101,11 @@ public class Contacto {
             int id = Integer.parseInt(partes[0].trim());
             String nombre = partes[1].trim();
             String apellido = partes[2].trim();
-            String apodo = partes[3].trim();
+            String apodo = partes[3].trim().isEmpty() ? null : partes[3].trim();
             String telefono = partes[4].trim();
             String email = partes[5].trim();
-            String direccion = partes[6].trim();
-            LocalDate fechaNacimiento = LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
+            String direccion = partes[6].trim().isEmpty() ? null : partes[6].trim();
+            LocalDate fechaNacimiento = partes[7].trim().isEmpty() ? null : LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
 
             return new Contacto(id, nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
 
@@ -143,7 +119,8 @@ public class Contacto {
     }
 
     // Comparator de ejemplo (ordenar por apellido)
-    public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido);
+    public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido,
+            Comparator.nullsFirst(Comparator.naturalOrder()));
 
     // Equals y hashCode (basado en ID)
     @Override
@@ -159,7 +136,6 @@ public class Contacto {
         return Objects.hash(id);
     }
 
-    // (Opcional) Obtener campo por nombre para búsquedas dinámicas
     public Object getCampo(String campo) {
         return switch (campo.toLowerCase()) {
             case "id" -> id;
