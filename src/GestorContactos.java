@@ -7,7 +7,8 @@ public class GestorContactos {
     private List<Contacto> contactos;
     private GestionIndices gestionIndices;
     private int siguienteId;
-    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATO_FECHA =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public GestorContactos() {
         contactos = new ArrayList<>();
@@ -19,6 +20,7 @@ public class GestorContactos {
     public void crearIndice(String campo, String tipoArbol) {
         gestionIndices.crearIndice(campo, tipoArbol);
 
+        // Reindexar contactos existentes
         for (Contacto contacto : contactos) {
             Object valorObj = contacto.getCampo(campo);
             if (valorObj != null) {
@@ -30,7 +32,7 @@ public class GestorContactos {
     public void agregarContacto(String nombre, String apellido, String apodo, String telefono,
                                 String email, String direccion, LocalDate fechaNacimiento) {
         if (!validarEmail(email)) {
-            System.out.println("Error. Email inválido. No se agregó el contacto.");
+            System.out.println("Email inválido. No se agregó el contacto.");
             return;
         }
 
@@ -57,7 +59,7 @@ public class GestorContactos {
                 .orElse(null);
 
         if (contactoAEliminar != null) {
-            // Eliminar los índices
+            // Eliminar de los índices
             for (String campo : gestionIndices.getCamposIndexados()) {
                 Object valorObj = contactoAEliminar.getCampo(campo);
                 if (valorObj != null) {
@@ -94,7 +96,8 @@ public class GestorContactos {
                     default -> valorAnterior;
                 };
                 if (valorAnterior != null && valorNuevo != null) {
-                    gestionIndices.actualizarIndice(campo, valorAnterior.toString(), valorNuevo.toString());
+                    gestionIndices.actualizarIndice(campo, valorAnterior.toString(),
+                            valorNuevo.toString());
                 }
             }
 

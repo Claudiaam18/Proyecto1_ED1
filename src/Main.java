@@ -45,7 +45,8 @@ public class Main {
 
                         try {
                             LocalDate fechaNacimiento = LocalDate.parse(fechaStr, dtf);
-                            gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
+                            gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion,
+                                    fechaNacimiento);
                             System.out.println("Contacto agregado exitosamente.");
                         } catch (DateTimeParseException e) {
                             System.out.println("Error en el formato de la fecha: " + e.getMessage());
@@ -82,7 +83,8 @@ public class Main {
 
                         try {
                             LocalDate nuevaFechaNacimiento = LocalDate.parse(nuevaFechaStr, dtf);
-                            gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido, nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
+                            gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido,
+                                    nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
                             System.out.println("Contacto actualizado exitosamente.");
                         } catch (DateTimeParseException e) {
                             System.out.println("Error en el formato de la fecha: " + e.getMessage());
@@ -131,7 +133,7 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Error: Debe ingresar un número válido.");
-                scanner.nextLine();
+                scanner.nextLine(); // Limpiar buffer
             }
         }
     }

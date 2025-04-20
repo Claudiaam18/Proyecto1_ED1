@@ -14,7 +14,8 @@ public class Contacto {
     private String direccion;
     private LocalDate fechaNacimiento;
 
-    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATO_FECHA =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public Contacto(int id, String nombre, String apellido, String apodo, String telefono,
                     String email, String direccion, LocalDate fechaNacimiento) {
@@ -57,7 +58,8 @@ public class Contacto {
     public void setDireccion(String direccion) { this.direccion = direccion; }
 
     public LocalDate getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento =
+            fechaNacimiento; }
 
     // Método para validar el formato de email
     public static boolean validarEmail(String email) {
@@ -74,7 +76,8 @@ public class Contacto {
                 ", telefono='" + telefono + '\'' +
                 ", email='" + email + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", fechaNacimiento=" + (fechaNacimiento != null ? fechaNacimiento.format(FORMATO_FECHA) : "null") +
+                ", fechaNacimiento=" + (fechaNacimiento != null ?
+                fechaNacimiento.format(FORMATO_FECHA) : "null") +
                 '}';
     }
 
@@ -105,9 +108,11 @@ public class Contacto {
             String telefono = partes[4].trim();
             String email = partes[5].trim();
             String direccion = partes[6].trim().isEmpty() ? null : partes[6].trim();
-            LocalDate fechaNacimiento = partes[7].trim().isEmpty() ? null : LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
+            LocalDate fechaNacimiento = partes[7].trim().isEmpty() ? null :
+                    LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
 
-            return new Contacto(id, nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
+            return new Contacto(id, nombre, apellido, apodo, telefono, email, direccion,
+                    fechaNacimiento);
 
         } catch (DateTimeParseException e) {
             System.out.println("Error de formato de fecha al importar: " + e.getMessage());
@@ -118,10 +123,9 @@ public class Contacto {
         }
     }
 
-    // Comparator de ejemplo (ordenar por apellido)
-    public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido,
-            Comparator.nullsFirst(Comparator.naturalOrder()));
-
+    public static Comparator<Contacto> porApellido =
+            Comparator.comparing(Contacto::getApellido,
+                    Comparator.nullsFirst(Comparator.naturalOrder()));
 
     @Override
     public boolean equals(Object o) {
