@@ -4,7 +4,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Clase principal que implementa la interfaz de usuario para la gestión de
+ * contactos.
+ *
+ */
 public class Main {
+    /**
+     * Método principal que inicia la aplicación de gestión de contactos.
+     * Proporciona un menú interactivo para que el usuario pueda realizar
+     * diversas operaciones con los contactos.
+     *
+     * @param args Argumentos de línea de comandos (no utilizados)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         GestorContactos gestor = new GestorContactos();
@@ -18,9 +30,10 @@ public class Main {
                 System.out.println("3. Actualizar contacto");
                 System.out.println("4. Visualizar contactos");
                 System.out.println("5. Exportar contactos a CSV");
-                System.out.println("6. Crear índice en un campo");
-                System.out.println("7. Mostrar recorrido por niveles en índice");
-                System.out.println("8. Salir");
+                System.out.println("6. Importar contactos desde CSV");
+                System.out.println("7. Crear índice en un campo");
+                System.out.println("8. Mostrar recorrido por niveles en índice");
+                System.out.println("9. Salir");
                 System.out.print("Seleccione una opción: ");
 
                 int opcion = scanner.nextInt();
@@ -28,6 +41,7 @@ public class Main {
 
                 switch (opcion) {
                     case 1:
+                        // Agregar contacto
                         System.out.print("Nombre: ");
                         String nombre = scanner.nextLine();
                         System.out.print("Apellido: ");
@@ -54,6 +68,7 @@ public class Main {
                         break;
 
                     case 2:
+                        // Eliminar contacto
                         System.out.print("ID del contacto a eliminar: ");
                         int idEliminar = scanner.nextInt();
                         scanner.nextLine();
@@ -62,6 +77,7 @@ public class Main {
                         break;
 
                     case 3:
+                        // Actualizar contacto
                         System.out.print("ID del contacto a actualizar: ");
                         int idActualizar = scanner.nextInt();
                         scanner.nextLine();
@@ -92,11 +108,13 @@ public class Main {
                         break;
 
                     case 4:
+                        // Visualizar todos los contactos
                         System.out.println("Lista de contactos:");
                         gestor.visualizarContactos();
                         break;
 
                     case 5:
+                        // Exportar contactos a un archivo CSV
                         System.out.print("Ruta del archivo CSV a exportar: ");
                         String rutaExportar = scanner.nextLine();
                         gestor.exportarContactos(rutaExportar);
@@ -104,6 +122,15 @@ public class Main {
                         break;
 
                     case 6:
+                        // Importar contactos desde un archivo CSV
+                        System.out.print("Ruta del archivo CSV a importar: ");
+                        String rutaImportar = scanner.nextLine();
+                        gestor.importarContactosDesdeCSV(rutaImportar);
+                        System.out.println("Contactos importados correctamente.");
+                        break;
+
+                    case 7:
+                        // Crear índice en un campo específico
                         System.out.print("Campo para indexar (nombre, apellido, etc.): ");
                         String campo = scanner.nextLine();
                         System.out.print("Tipo de índice (BST/AVL): ");
@@ -116,13 +143,15 @@ public class Main {
                         }
                         break;
 
-                    case 7:
+                    case 8:
+                        // Mostrar recorrido por niveles de un índice
                         System.out.print("Ingrese el campo del índice a mostrar: ");
                         String campoMostrar = scanner.nextLine();
                         gestor.mostrarRecorridoPorNivel(campoMostrar);
                         break;
 
-                    case 8:
+                    case 9:
+                        // Salir de la aplicación
                         System.out.println("Saliendo...");
                         scanner.close();
                         return;

@@ -3,13 +3,26 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Clase que gestiona la colección de contactos y sus operaciones.
+ *
+ * Esta clase implementa la funcionalidad CRUD (Crear, Leer, Actualizar,
+ * Eliminar)
+ * para la gestión de contactos, así como la indexación de campos mediante
+ * estructuras de datos jerárquicas (árboles BST o AVL).
+ *
+ */
 public class GestorContactos {
     private List<Contacto> contactos;
     private GestionIndices gestionIndices;
     private int siguienteId;
-    private static final DateTimeFormatter FORMATO_FECHA =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /**
+     * Constructor de la clase GestorContactos.
+     * Inicializa la lista de contactos, la gestión de índices y carga los contactos
+     * desde el archivo CSV por defecto.
+     */
     public GestorContactos() {
         contactos = new ArrayList<>();
         gestionIndices = new GestionIndices();
@@ -17,6 +30,14 @@ public class GestorContactos {
         importarContactosDesdeCSV("contacts.csv");
     }
 
+    /**
+     * Crea un índice para un campo específico utilizando el tipo de árbol
+     * especificado.
+     *
+     * @param campo     Campo sobre el que se creará el índice (nombre, apellido,
+     *                  etc.)
+     * @param tipoArbol Tipo de árbol a utilizar ("BST" o "AVL")
+     */
     public void crearIndice(String campo, String tipoArbol) {
         gestionIndices.crearIndice(campo, tipoArbol);
 
@@ -29,6 +50,18 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Agrega un nuevo contacto a la lista y actualiza los índices correspondientes.
+     *
+     * @param nombre          Nombre del contacto
+     * @param apellido        Apellido del contacto
+     * @param apodo           Apodo del contacto
+     * @param telefono        Número de teléfono del contacto
+     * @param email           Correo electrónico del contacto (debe tener un formato
+     *                        válido)
+     * @param direccion       Dirección del contacto
+     * @param fechaNacimiento Fecha de nacimiento del contacto
+     */
     public void agregarContacto(String nombre, String apellido, String apodo, String telefono,
                                 String email, String direccion, LocalDate fechaNacimiento) {
         if (!validarEmail(email)) {
@@ -52,6 +85,14 @@ public class GestorContactos {
         guardarContactosEnCSV("contacts.csv");
     }
 
+    /**
+     * Elimina un contacto de la lista por su ID y actualiza los índices
+     * correspondientes.
+     *
+     * @param id ID del contacto a eliminar
+     * @return true si el contacto fue eliminado exitosamente, false si no se
+     *         encontró
+     */
     public boolean eliminarContacto(int id) {
         Contacto contactoAEliminar = contactos.stream()
                 .filter(c -> c.getId() == id)
@@ -74,6 +115,19 @@ public class GestorContactos {
         return false;
     }
 
+    /**
+     * Actualiza los datos de un contacto existente por su ID y actualiza los
+     * índices.
+     *
+     * @param id              ID del contacto a actualizar
+     * @param nombre          Nuevo nombre del contacto
+     * @param apellido        Nuevo apellido del contacto
+     * @param apodo           Nuevo apodo del contacto
+     * @param telefono        Nuevo teléfono del contacto
+     * @param email           Nuevo email del contacto (debe tener formato válido)
+     * @param direccion       Nueva dirección del contacto
+     * @param fechaNacimiento Nueva fecha de nacimiento del contacto
+     */
     public void actualizarContacto(int id, String nombre, String apellido, String apodo,
                                    String telefono, String email, String direccion, LocalDate fechaNacimiento) {
         Contacto contacto = contactos.stream()
@@ -117,6 +171,9 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Muestra todos los contactos almacenados en la lista.
+     */
     public void visualizarContactos() {
         if (contactos.isEmpty()) {
             System.out.println("No hay contactos almacenados.");
@@ -126,31 +183,100 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Muestra el recorrido por niveles de un índice específico y lo guarda en un
+     * archivo.
+     *
+     * @param campo Nombre del campo indexado a mostrar
+     */
     public void mostrarRecorridoPorNivel(String campo) {
         List<String> recorrido = gestionIndices.recorridoPorNivel(campo);
 
         if (recorrido != null && !recorrido.isEmpty()) {
             System.out.println("Recorrido por niveles del índice '" + campo + "':");
-            System.out.println(String.join(", ", recorrido));
+
+            // Crear un mapa para relacionar los valores del campo con sus IDs
+            Map<String, List<Integer>> valoresAIds = new HashMap<>();
+
+            // Poblar el mapa con los valores del campo y sus IDs correspondientes
+            for (Contacto contacto : contactos) {
+                Object valorObj = contacto.getCampo(campo);
+                if (valorObj != null) {
+                    String valor = valorObj.toString();
+                    if (!valoresAIds.containsKey(valor)) {
+                        valoresAIds.put(valor, new ArrayList<>());
+                    }
+                    valoresAIds.get(valor).add(contacto.getId());
+                }
+            }
+
+            // Construir la cadena de IDs para el recorrido por nivel
+            StringBuilder resultado = new StringBuilder();
+            boolean primero = true;
+
+            for (String valor : recorrido) {
+                if (!primero) {
+                    resultado.append(",");
+                }
+                primero = false;
+
+                if (valor != null && valoresAIds.containsKey(valor) && !valoresAIds.get(valor).isEmpty()) {
+                    // Mostrar el ID del contacto correspondiente a este valor
+                    resultado.append(valoresAIds.get(valor).get(0));
+                } else {
+                    resultado.append("null");
+                }
+            }
+
+            System.out.println(resultado.toString());
+
+            // Guardar el recorrido por niveles en archivos específicos
+            // según el tipo de estructura (AVL o BST)
+            String tipoIndice = gestionIndices.getTipoIndice(campo);
+            if (tipoIndice != null && !tipoIndice.equals("N/A")) {
+                String nombreArchivo = campo + "-" + tipoIndice.toLowerCase() + ".txt";
+                // Cambiar la ruta para guardar en la carpeta 'src/reportes'
+                String nombreArchivoCompleto = "src/reportes/" + nombreArchivo;
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivoCompleto))) {
+                    writer.write(resultado.toString());
+                    System.out.println("Recorrido por niveles (IDs) guardado en el archivo: " + nombreArchivoCompleto);
+                } catch (IOException e) {
+                    System.out.println("Error al guardar el recorrido por niveles: " + e.getMessage());
+                }
+            }
         } else {
             System.out.println("No existe un índice para el campo '" + campo + "' o está vacío.");
         }
     }
 
+    /**
+     * Exporta todos los contactos a un archivo CSV en la ruta especificada.
+     *
+     * @param rutaExportar Ruta del archivo CSV donde se exportarán los contactos
+     */
     public void exportarContactos(String rutaExportar) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaExportar))) {
+        // Cambiar la ruta para guardar en la carpeta 'src/reportes'
+        String rutaExportarCompleta = "src/reportes/" + rutaExportar;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaExportarCompleta))) {
             for (Contacto contacto : contactos) {
                 writer.write(contacto.toCSV());
                 writer.newLine();
             }
-            System.out.println("Contactos exportados correctamente a " + rutaExportar);
+            System.out.println("Contactos exportados correctamente a " + rutaExportarCompleta);
         } catch (IOException e) {
             System.out.println("Error al exportar contactos: " + e.getMessage());
         }
     }
 
+    /**
+     * Guarda la lista de contactos en un archivo CSV.
+     *
+     * @param archivo Ruta del archivo CSV donde se guardarán los contactos
+     */
     private void guardarContactosEnCSV(String archivo) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+        // Cambiar la ruta para guardar en la carpeta 'src/reportes'
+        String archivoCompleto = "src/reportes/" + archivo;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoCompleto))) {
             for (Contacto contacto : contactos) {
                 writer.write(contacto.toCSV());
                 writer.newLine();
@@ -160,10 +286,27 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Importa contactos desde un archivo CSV y los añade a la lista.
+     *
+     * @param archivoCSV Ruta del archivo CSV desde donde se importarán los
+     *                   contactos
+     */
     public void importarContactosDesdeCSV(String archivoCSV) {
+
+        System.out.println("Importando contactos desde " + archivoCSV);
+
         try (BufferedReader reader = new BufferedReader(new FileReader(archivoCSV))) {
             String linea;
+            boolean primeraLinea = true; // Para identificar la línea de encabezados
+
             while ((linea = reader.readLine()) != null) {
+                // Ignorar la primera línea que contiene los encabezados
+                if (primeraLinea) {
+                    primeraLinea = false;
+                    continue;
+                }
+
                 Contacto contacto = Contacto.fromCSV(linea);
                 if (contacto != null) {
                     contactos.add(contacto);
@@ -176,6 +319,10 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Reconstruye los índices para todos los contactos existentes.
+     * Se utiliza después de importar contactos desde un archivo.
+     */
     private void reconstruirIndices() {
         for (String campo : gestionIndices.getCamposIndexados()) {
             for (Contacto contacto : contactos) {
@@ -187,6 +334,12 @@ public class GestorContactos {
         }
     }
 
+    /**
+     * Valida que un correo electrónico tenga un formato válido.
+     *
+     * @param email El correo electrónico a validar
+     * @return true si el formato es válido, false en caso contrario
+     */
     private boolean validarEmail(String email) {
         return email != null && email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     }

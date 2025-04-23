@@ -4,6 +4,13 @@ import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.Objects;
 
+/**
+ * Clase que representa un contacto en la agenda.
+ *
+ * Contiene toda la información personal de un contacto como nombre, apellido,
+ * teléfono, email, etc., así como métodos para la conversión a/desde CSV.
+ *
+ */
 public class Contacto {
     private int id;
     private String nombre;
@@ -14,9 +21,21 @@ public class Contacto {
     private String direccion;
     private LocalDate fechaNacimiento;
 
-    private static final DateTimeFormatter FORMATO_FECHA =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /**
+     * Constructor para crear un nuevo contacto.
+     *
+     * @param id              Identificador único del contacto
+     * @param nombre          Nombre del contacto
+     * @param apellido        Apellido del contacto
+     * @param apodo           Apodo o alias del contacto (puede ser null)
+     * @param telefono        Número de teléfono del contacto
+     * @param email           Dirección de correo electrónico (debe tener un formato
+     *                        válido)
+     * @param direccion       Dirección física del contacto
+     * @param fechaNacimiento Fecha de nacimiento del contacto
+     */
     public Contacto(int id, String nombre, String apellido, String apodo, String telefono,
                     String email, String direccion, LocalDate fechaNacimiento) {
         this.id = id;
@@ -30,22 +49,89 @@ public class Contacto {
     }
 
     // Getters y Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    /**
+     * @return El ID del contacto
+     */
+    public int getId() {
+        return id;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    /**
+     * @param id El nuevo ID para el contacto
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    /**
+     * @return El nombre del contacto
+     */
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getApodo() { return apodo; }
-    public void setApodo(String apodo) { this.apodo = apodo; }
+    /**
+     * @param nombre El nuevo nombre del contacto
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    /**
+     * @return El apellido del contacto
+     */
+    public String getApellido() {
+        return apellido;
+    }
 
-    public String getEmail() { return email; }
+    /**
+     * @param apellido El nuevo apellido del contacto
+     */
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    /**
+     * @return El apodo del contacto
+     */
+    public String getApodo() {
+        return apodo;
+    }
+
+    /**
+     * @param apodo El nuevo apodo del contacto
+     */
+    public void setApodo(String apodo) {
+        this.apodo = apodo;
+    }
+
+    /**
+     * @return El teléfono del contacto
+     */
+    public String getTelefono() {
+        return telefono;
+    }
+
+    /**
+     * @param telefono El nuevo teléfono del contacto
+     */
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    /**
+     * @return El email del contacto
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Establece una nueva dirección de correo electrónico, pero solo si es válida.
+     *
+     * @param email La nueva dirección de correo electrónico
+     * @throws IllegalArgumentException si el formato del email no es válido
+     */
     public void setEmail(String email) {
         if (validarEmail(email)) {
             this.email = email;
@@ -54,18 +140,49 @@ public class Contacto {
         }
     }
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    /**
+     * @return La dirección del contacto
+     */
+    public String getDireccion() {
+        return direccion;
+    }
 
-    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento =
-            fechaNacimiento; }
+    /**
+     * @param direccion La nueva dirección del contacto
+     */
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-    // Método para validar el formato de email
+    /**
+     * @return La fecha de nacimiento del contacto
+     */
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    /**
+     * @param fechaNacimiento La nueva fecha de nacimiento del contacto
+     */
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    /**
+     * Valida que una dirección de correo electrónico tenga un formato válido.
+     *
+     * @param email El email a validar
+     * @return true si el formato es válido, false en caso contrario
+     */
     public static boolean validarEmail(String email) {
         return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     }
 
+    /**
+     * Devuelve una representación en cadena de texto del contacto.
+     *
+     * @return Una cadena con todos los datos del contacto
+     */
     @Override
     public String toString() {
         return "Contacto{" +
@@ -76,12 +193,15 @@ public class Contacto {
                 ", telefono='" + telefono + '\'' +
                 ", email='" + email + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", fechaNacimiento=" + (fechaNacimiento != null ?
-                fechaNacimiento.format(FORMATO_FECHA) : "null") +
+                ", fechaNacimiento=" + (fechaNacimiento != null ? fechaNacimiento.format(FORMATO_FECHA) : "null") +
                 '}';
     }
 
-    // Exportación a CSV
+    /**
+     * Convierte el contacto a una línea de texto en formato CSV.
+     *
+     * @return Una cadena con los datos del contacto en formato CSV
+     */
     public String toCSV() {
         return id + "," +
                 (nombre != null ? nombre : "") + "," +
@@ -93,7 +213,12 @@ public class Contacto {
                 (fechaNacimiento != null ? fechaNacimiento.format(FORMATO_FECHA) : "");
     }
 
-    // Importación desde CSV
+    /**
+     * Crea un objeto Contacto a partir de una línea en formato CSV.
+     *
+     * @param linea La línea en formato CSV con los datos del contacto
+     * @return Un nuevo objeto Contacto, o null si la línea es inválida
+     */
     public static Contacto fromCSV(String linea) {
         try {
             String[] partes = linea.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -108,8 +233,25 @@ public class Contacto {
             String telefono = partes[4].trim();
             String email = partes[5].trim();
             String direccion = partes[6].trim().isEmpty() ? null : partes[6].trim();
-            LocalDate fechaNacimiento = partes[7].trim().isEmpty() ? null :
-                    LocalDate.parse(partes[7].trim(), FORMATO_FECHA);
+
+            LocalDate fechaNacimiento = null;
+            String fechaStr = partes[7].trim();
+            if (!fechaStr.isEmpty()) {
+                // Intentar formatear la fecha según el formato esperado (yyyy-MM-dd)
+                try {
+                    fechaNacimiento = LocalDate.parse(fechaStr, FORMATO_FECHA);
+                } catch (DateTimeParseException e) {
+                    // Intentar formatear la fecha si está en formato YYYYMMDD
+                    if (fechaStr.length() == 8 && fechaStr.matches("\\d{8}")) {
+                        int year = Integer.parseInt(fechaStr.substring(0, 4));
+                        int month = Integer.parseInt(fechaStr.substring(4, 6));
+                        int day = Integer.parseInt(fechaStr.substring(6, 8));
+                        fechaNacimiento = LocalDate.of(year, month, day);
+                    } else {
+                        throw e; // Relanzar la excepción si no se puede parsear
+                    }
+                }
+            }
 
             return new Contacto(id, nombre, apellido, apodo, telefono, email, direccion,
                     fechaNacimiento);
@@ -123,23 +265,46 @@ public class Contacto {
         }
     }
 
-    public static Comparator<Contacto> porApellido =
-            Comparator.comparing(Contacto::getApellido,
-                    Comparator.nullsFirst(Comparator.naturalOrder()));
+    /**
+     * Comparador para ordenar contactos por apellido.
+     */
+    public static Comparator<Contacto> porApellido = Comparator.comparing(Contacto::getApellido,
+            Comparator.nullsFirst(Comparator.naturalOrder()));
 
+    /**
+     * Compara este contacto con otro objeto para verificar si son iguales.
+     * Dos contactos son considerados iguales si tienen el mismo ID.
+     *
+     * @param o El objeto a comparar con este contacto
+     * @return true si los objetos son iguales, false en caso contrario
+     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Contacto)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Contacto))
+            return false;
         Contacto contacto = (Contacto) o;
         return id == contacto.id;
     }
 
+    /**
+     * Calcula el código hash para este contacto basado en su ID.
+     *
+     * @return El código hash calculado
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
 
+    /**
+     * Obtiene el valor de un campo específico del contacto utilizando el nombre del
+     * campo.
+     *
+     * @param campo El nombre del campo a obtener (id, nombre, apellido, etc.)
+     * @return El valor del campo solicitado, o null si el campo no existe
+     */
     public Object getCampo(String campo) {
         return switch (campo.toLowerCase()) {
             case "id" -> id;
