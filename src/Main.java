@@ -5,21 +5,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Clase principal que implementa la interfaz de usuario para la gestión de
- * contactos.
- *
+ * Clase principal que implementa la interfaz de usuario para la gestión de contactos.
  */
 public class Main {
     /**
      * Método principal que inicia la aplicación de gestión de contactos.
-     * Proporciona un menú interactivo para que el usuario pueda realizar
-     * diversas operaciones con los contactos.
+     * Proporciona un menú interactivo para que el usuario pueda realizar diversas operaciones.
      *
      * @param args Argumentos de línea de comandos (no utilizados)
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        GestorContactos gestor = new GestorContactos(); //instancia que gestionará los contactos
+        GestorContactos gestor = new GestorContactos(); // Instancia para gestionar contactos
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (true) {
@@ -33,7 +30,8 @@ public class Main {
                 System.out.println("6. Importar contactos desde CSV");
                 System.out.println("7. Crear índice en un campo");
                 System.out.println("8. Mostrar recorrido por niveles en índice");
-                System.out.println("9. Salir");
+                System.out.println("9. Buscar contacto en índice");
+                System.out.println("10. Salir");
                 System.out.print("Seleccione una opción: ");
 
                 int opcion = scanner.nextInt();
@@ -59,9 +57,7 @@ public class Main {
 
                         try {
                             LocalDate fechaNacimiento = LocalDate.parse(fechaStr, dtf);
-                            //método para agregar el contacto
-                            gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion,
-                                    fechaNacimiento);
+                            gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion, fechaNacimiento);
                             System.out.println("Contacto agregado exitosamente.");
                         } catch (DateTimeParseException e) {
                             System.out.println("Error en el formato de la fecha: " + e.getMessage());
@@ -100,9 +96,7 @@ public class Main {
 
                         try {
                             LocalDate nuevaFechaNacimiento = LocalDate.parse(nuevaFechaStr, dtf);
-                            //metodo para actualizar el contacto
-                            gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido,
-                                    nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
+                            gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido, nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
                             System.out.println("Contacto actualizado exitosamente.");
                         } catch (DateTimeParseException e) {
                             System.out.println("Error en el formato de la fecha: " + e.getMessage());
@@ -138,7 +132,6 @@ public class Main {
                         System.out.print("Tipo de índice (BST/AVL): ");
                         String tipo = scanner.nextLine();
 
-                        //crea el indice si el tipo es válido
                         if (tipo.equalsIgnoreCase("BST") || tipo.equalsIgnoreCase("AVL")) {
                             gestor.crearIndice(campo, tipo);
                             System.out.println("Índice creado exitosamente.");
@@ -155,6 +148,21 @@ public class Main {
                         break;
 
                     case 9:
+                        // Buscar un contacto en el índice
+                        System.out.print("Ingrese el campo a buscar (nombre, apellido, etc.): ");
+                        String campoBuscar = scanner.nextLine();
+                        System.out.print("Ingrese el valor a buscar: ");
+                        String valorBuscar = scanner.nextLine();
+
+                        boolean encontrado = gestor.buscarEnIndice(campoBuscar, valorBuscar);
+                        if (encontrado) {
+                            System.out.println("¡El contacto fue encontrado en el índice!");
+                        } else {
+                            System.out.println("El contacto no existe en este índice.");
+                        }
+                        break;
+
+                    case 10:
                         // Salir de la aplicación
                         System.out.println("Saliendo...");
                         scanner.close();

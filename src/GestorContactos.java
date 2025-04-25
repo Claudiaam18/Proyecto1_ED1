@@ -345,4 +345,9 @@ public class GestorContactos {
     private boolean validarEmail(String email) {
         return email != null && email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     }
+
+    public boolean buscarEnIndice(String campo, String valor) {
+        return gestionIndices.buscarEnIndice(campo, valor);
+    }
+
 }
