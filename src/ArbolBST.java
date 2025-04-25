@@ -16,6 +16,7 @@ public class ArbolBST<T extends Comparable<T>> {
      */
     private class Nodo {
         T clave;
+        //punteros a los hijos izquierdos y derechos
         Nodo izquierdo;
         Nodo derecho;
 
@@ -150,29 +151,66 @@ public class ArbolBST<T extends Comparable<T>> {
     }
 
     /**
+     * Calcula la altura del árbol.
+     *
+     * @param nodo El nodo raíz para calcular la altura
+     * @return La altura del árbol
+     */
+    private int altura(Nodo nodo) {
+        if (nodo == null)
+            return 0;
+
+        int alturaIzq = altura(nodo.izquierdo);
+        int alturaDer = altura(nodo.derecho);
+
+        return Math.max(alturaIzq, alturaDer) + 1;
+    }
+
+    /**
      * Realiza un recorrido por niveles (BFS) del árbol y devuelve los valores en
-     * orden.
+     * orden, agregando un "null" después de cada nodo derecho para indicar el
+     * cambio.
      *
      * @return Una lista con los valores del árbol en recorrido por niveles
      */
-    public List<T> recorridoPorNivel() {
-        List<T> resultado = new ArrayList<>();
+    public List<String> recorridoPorNivel() {
+        List<String> resultado = new ArrayList<>();
         if (raiz == null)
             return resultado;
 
-        List<Nodo> nivel = new ArrayList<>();
-        nivel.add(raiz);
+        // Para realizar un recorrido por niveles usando BFS
+        java.util.Queue<Nodo> cola = new java.util.LinkedList<>();
+        // Para marcar si un nodo es hijo derecho
+        java.util.Queue<Boolean> esDerecho = new java.util.LinkedList<>();
 
-        while (!nivel.isEmpty()) {
-            List<Nodo> siguienteNivel = new ArrayList<>();
-            for (Nodo actual : nivel) {
-                resultado.add(actual.clave);
-                if (actual.izquierdo != null)
-                    siguienteNivel.add(actual.izquierdo);
-                if (actual.derecho != null)
-                    siguienteNivel.add(actual.derecho);
+        // Iniciar con la raíz (no es hijo derecho de nadie)
+        cola.add(raiz);
+        esDerecho.add(false);
+
+        while (!cola.isEmpty()) {
+            Nodo actual = cola.poll();
+            boolean esHijoDerecho = esDerecho.poll();
+
+            // Añadir el valor del nodo actual
+            if (actual != null) {
+                resultado.add(actual.clave.toString());
+
+                // Añadir los hijos a la cola
+                if (actual.izquierdo != null) {
+                    cola.add(actual.izquierdo);
+                    esDerecho.add(false); // Hijo izquierdo
+                }
+
+                if (actual.derecho != null) {
+                    cola.add(actual.derecho);
+                    esDerecho.add(true); // Hijo derecho
+                }
+
+                // Añadir un "null" después de un hijo derecho para indicar cambio
+                if (esHijoDerecho) {
+                    resultado.add("null");
+                }
             }
-            nivel = siguienteNivel;
         }
 
         return resultado;

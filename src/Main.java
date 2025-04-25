@@ -19,7 +19,7 @@ public class Main {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        GestorContactos gestor = new GestorContactos();
+        GestorContactos gestor = new GestorContactos(); //instancia que gestionará los contactos
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (true) {
@@ -59,6 +59,7 @@ public class Main {
 
                         try {
                             LocalDate fechaNacimiento = LocalDate.parse(fechaStr, dtf);
+                            //método para agregar el contacto
                             gestor.agregarContacto(nombre, apellido, apodo, telefono, email, direccion,
                                     fechaNacimiento);
                             System.out.println("Contacto agregado exitosamente.");
@@ -99,6 +100,7 @@ public class Main {
 
                         try {
                             LocalDate nuevaFechaNacimiento = LocalDate.parse(nuevaFechaStr, dtf);
+                            //metodo para actualizar el contacto
                             gestor.actualizarContacto(idActualizar, nuevoNombre, nuevoApellido,
                                     nuevoApodo, nuevoTelefono, nuevoEmail, nuevaDireccion, nuevaFechaNacimiento);
                             System.out.println("Contacto actualizado exitosamente.");
@@ -135,6 +137,8 @@ public class Main {
                         String campo = scanner.nextLine();
                         System.out.print("Tipo de índice (BST/AVL): ");
                         String tipo = scanner.nextLine();
+
+                        //crea el indice si el tipo es válido
                         if (tipo.equalsIgnoreCase("BST") || tipo.equalsIgnoreCase("AVL")) {
                             gestor.crearIndice(campo, tipo);
                             System.out.println("Índice creado exitosamente.");

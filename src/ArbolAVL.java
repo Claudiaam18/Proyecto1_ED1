@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementación de un Árbol AVL (Adelson-Velsky y Landis).
+ * Implementación de un Árbol AVL
  *
  * Esta clase proporciona una estructura de datos jerárquica autobalanceada
  * que mantiene sus elementos ordenados para realizar búsquedas eficientes,
@@ -15,8 +15,8 @@ public class ArbolAVL<T extends Comparable<T>> {
      */
     private class Nodo {
         T clave;
-        Nodo izquierdo;
-        Nodo derecho;
+        Nodo izquierdo; //referencia a los hijos izquierdos
+        Nodo derecho; //referencias a los hijos derechos
         int altura;
 
         /**
@@ -26,7 +26,7 @@ public class ArbolAVL<T extends Comparable<T>> {
          */
         public Nodo(T clave) {
             this.clave = clave;
-            this.altura = 1;
+            this.altura = 1; //cada nodo tiene altura 1 de primero
         }
     }
 
@@ -44,6 +44,7 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     /**
      * Calcula el factor de balance de un nodo.
+     * si es mayor que 1 o menor que -1, se rotará
      * Factor de balance = altura(subárbol izquierdo) - altura(subárbol derecho)
      *
      * @param nodo El nodo del cual se calculará el factor de balance
@@ -279,28 +280,48 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     /**
      * Realiza un recorrido por niveles (BFS) del árbol y devuelve los valores en
-     * orden.
+     * orden, agregando un "null" después de cada nodo derecho para indicar el
+     * cambio.
      *
      * @return Una lista con los valores del árbol en recorrido por niveles
      */
-    public List<T> recorridoPorNivel() {
-        List<T> resultado = new ArrayList<>();
+    public List<String> recorridoPorNivel() {
+        List<String> resultado = new ArrayList<>();
         if (raiz == null)
             return resultado;
 
+        // Para realizar un recorrido por niveles usando BFS
         java.util.Queue<Nodo> cola = new java.util.LinkedList<>();
+        // Para marcar si un nodo es hijo derecho
+        java.util.Queue<Boolean> esDerecho = new java.util.LinkedList<>();
+
+        // Iniciar con la raíz (no es hijo derecho de nadie)
         cola.add(raiz);
+        esDerecho.add(false);
 
         while (!cola.isEmpty()) {
             Nodo actual = cola.poll();
-            resultado.add(actual.clave);
+            boolean esHijoDerecho = esDerecho.poll();
 
-            if (actual.izquierdo != null) {
-                cola.add(actual.izquierdo);
-            }
+            // Añadir el valor del nodo actual
+            if (actual != null) {
+                resultado.add(actual.clave.toString());
 
-            if (actual.derecho != null) {
-                cola.add(actual.derecho);
+                // Añadir los hijos a la cola
+                if (actual.izquierdo != null) {
+                    cola.add(actual.izquierdo);
+                    esDerecho.add(false); // Hijo izquierdo
+                }
+
+                if (actual.derecho != null) {
+                    cola.add(actual.derecho);
+                    esDerecho.add(true); // Hijo derecho
+                }
+
+                // Añadir un "null" después de un hijo derecho para indicar cambio
+                if (esHijoDerecho) {
+                    resultado.add("null");
+                }
             }
         }
 

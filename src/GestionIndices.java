@@ -184,7 +184,7 @@ public class GestionIndices {
             String tipo = tiposIndice.get(campo);
             String archivo = campo + "-" + tipo.toLowerCase() + ".txt";
             // Cambiar la ruta para guardar en la carpeta 'src/reportes'
-            String archivoCompleto = "src/reportes/" + archivo;
+            String archivoCompleto = "reportes/" + archivo;
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoCompleto))) {
                 List<String> valores = recorridoPorNivel(campo);
@@ -199,7 +199,7 @@ public class GestionIndices {
      * Carga índices desde archivos de texto según la configuración proporcionada.
      *
      * @param configIndices Mapa con la configuración de índices (campo -> tipo)
-     * @throws IOException Si ocurre un error al leer los archivos
+     * @throws IOException siocurre un error al leer los archivos
      */
     public void cargarIndices(Map<String, String> configIndices) throws IOException {
         for (Map.Entry<String, String> entry : configIndices.entrySet()) {

@@ -236,7 +236,14 @@ public class GestorContactos {
             if (tipoIndice != null && !tipoIndice.equals("N/A")) {
                 String nombreArchivo = campo + "-" + tipoIndice.toLowerCase() + ".txt";
                 // Cambiar la ruta para guardar en la carpeta 'src/reportes'
-                String nombreArchivoCompleto = "src/reportes/" + nombreArchivo;
+                String nombreArchivoCompleto = "reportes/" + nombreArchivo;
+
+                // Asegurar que el directorio existe
+                File directorioReportes = new File("reportes");
+                if (!directorioReportes.exists()) {
+                    directorioReportes.mkdirs();
+                }
+
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivoCompleto))) {
                     writer.write(resultado.toString());
                     System.out.println("Recorrido por niveles (IDs) guardado en el archivo: " + nombreArchivoCompleto);
@@ -255,14 +262,12 @@ public class GestorContactos {
      * @param rutaExportar Ruta del archivo CSV donde se exportarán los contactos
      */
     public void exportarContactos(String rutaExportar) {
-        // Cambiar la ruta para guardar en la carpeta 'src/reportes'
-        String rutaExportarCompleta = "src/reportes/" + rutaExportar;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaExportarCompleta))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaExportar))) {
             for (Contacto contacto : contactos) {
                 writer.write(contacto.toCSV());
                 writer.newLine();
             }
-            System.out.println("Contactos exportados correctamente a " + rutaExportarCompleta);
+            System.out.println("Contactos exportados correctamente a " + rutaExportar);
         } catch (IOException e) {
             System.out.println("Error al exportar contactos: " + e.getMessage());
         }
@@ -274,9 +279,7 @@ public class GestorContactos {
      * @param archivo Ruta del archivo CSV donde se guardarán los contactos
      */
     private void guardarContactosEnCSV(String archivo) {
-        // Cambiar la ruta para guardar en la carpeta 'src/reportes'
-        String archivoCompleto = "src/reportes/" + archivo;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoCompleto))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
             for (Contacto contacto : contactos) {
                 writer.write(contacto.toCSV());
                 writer.newLine();
@@ -293,7 +296,6 @@ public class GestorContactos {
      *                   contactos
      */
     public void importarContactosDesdeCSV(String archivoCSV) {
-
         System.out.println("Importando contactos desde " + archivoCSV);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(archivoCSV))) {
